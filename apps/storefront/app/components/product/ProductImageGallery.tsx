@@ -17,6 +17,7 @@ export interface ProductGalleryImage {
 
 export interface ProductImageGalleryProps {
   product: StoreProduct;
+  textOverImage?: string;
 }
 
 const GalleryImagesRow: FC<{ galleryImages: ProductGalleryImage[] }> = memo(({ galleryImages }) => {
@@ -54,7 +55,7 @@ const GalleryImagesRow: FC<{ galleryImages: ProductGalleryImage[] }> = memo(({ g
   );
 });
 
-export const ProductImageGallery: FC<ProductImageGalleryProps> = ({ product }) => {
+export const ProductImageGallery: FC<ProductImageGalleryProps> = ({ product, textOverImage }) => {
   const { images: productImages = [], thumbnail } = product;
   const images = productImages ?? [];
   const [lightboxIndex, setLightboxIndex] = useState(-1);
@@ -63,7 +64,6 @@ export const ProductImageGallery: FC<ProductImageGalleryProps> = ({ product }) =
     buffer: 50,
     resetOnDepChange: [product],
   });
-
   const gallery: ProductGalleryImage[] =
     images?.length < 1 && thumbnail
       ? [
@@ -113,6 +113,9 @@ export const ProductImageGallery: FC<ProductImageGalleryProps> = ({ product }) =
                 className="group relative h-full w-full cursor-pointer overflow-hidden sm:rounded-md"
                 onClick={() => setLightboxIndex(imageIndex)}
               >
+                {textOverImage
+                  ? <div className="text-[16px] font-[Aboreto] [word-wrap:break-word] max-w-[10rem] lg:max-w-[17rem] lg:text-[22px] leading-[31px] absolute top-2/4 left-[42%] -translate-x-1/2 -translate-y-1/2 z-[5]">{textOverImage}</div>
+                  : <></>}
                 <Image
                   key={image.id}
                   style={{

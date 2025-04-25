@@ -68,6 +68,10 @@ const buildBaseProductData = ({
   ],
 });
 
+type ExtendedCreateProductInput = CreateProductWorkflowInputDTO & {
+  type?: any;
+};
+
 export const seedProducts = ({
   collections,
   tags,
@@ -80,7 +84,7 @@ export const seedProducts = ({
   categories: { id: string; name: string }[];
   sales_channels: { id: string }[];
   shipping_profile_id: string;
-}): CreateProductWorkflowInputDTO[] => [
+}): ExtendedCreateProductInput[] => [
   {
     title: 'Barrio Blend - Medium Roast',
     description:
@@ -284,4 +288,38 @@ export const seedProducts = ({
       },
     }),
   },
+  {
+    title: 'Custom Mug',
+    description:
+      'Enjoy your cold afternoons with customizable and sleek ceramic mug',
+    handle: 'ceramic-mug',
+    collection_id: collections.find(({ title }) => title === 'Dark Roasts')?.id,
+    category_ids: categories.filter(({ name }) => name === 'Blends').map(({ id }) => id),
+    status: ProductStatus.PUBLISHED,
+    tag_ids: tags.filter((t) => ['Peru'].includes(t.value)).map((t) => t.id),
+    thumbnail: 'https://iili.io/3Gj1LX9.png',
+    shipping_profile_id,
+    images: [
+      {
+        url: 'https://iili.io/3Gj1LX9.png',
+      },
+    ],
+    type: {
+      created_at: "2025-04-22T20:53:04.051Z",
+      deleted_at: null,
+      id: "ptyp_01JSFMD5XJRABRF7WXVZNQ7WR7",
+      metadata: null,
+      updated_at: "2025-04-22T20:53:04.051Z",
+      value: "custom-obj"
+    },
+    type_id: "ptyp_01JSFMD5XJRABRF7WXVZNQ7WR7",
+    ...buildBaseProductData({
+      sales_channels,
+      sku: 'SMUG',
+      prices: {
+        usd: 26.0,
+        cad: 33.0,
+      },
+    }),
+  }
 ];

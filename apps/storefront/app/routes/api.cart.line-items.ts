@@ -28,6 +28,7 @@ export enum LineItemActions {
 export interface CreateLineItemPayLoad {
   cartId: string;
   productId: string;
+  customMsjField: string;
   options: { [key: string]: string };
   quantity: string;
 }
@@ -50,8 +51,7 @@ const createItem: ActionHandler<{ cart: StoreCart }> = async (payload: CreateLin
 
   if (result.error) throw new FormValidationError(result.error);
 
-  const { productId, options, quantity } = payload;
-
+  const { productId, options, quantity, customMsjField } = payload;
   const region = await getSelectedRegion(request.headers);
 
   const [product] = await getProductsById({
@@ -78,6 +78,7 @@ const createItem: ActionHandler<{ cart: StoreCart }> = async (payload: CreateLin
   const { cart } = await addToCart(request, {
     variantId: variant.id!,
     quantity: parseInt(quantity, 10),
+    customMsjField
   });
 
   await setCartId(responseHeaders, cart.id);

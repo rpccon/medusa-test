@@ -66,6 +66,7 @@ module.exports = {
       },
       screens: {
         xs: '400px',
+        lg: '1100px',
       },
       fontSize: {
         '2xs': '.65rem',

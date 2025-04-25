@@ -1,6 +1,7 @@
 import { formatLineItemPrice } from '@libs/util/prices';
 import clsx from 'clsx';
 import type { FC } from 'react';
+import { useEffect } from 'react';
 import { useRemoveCartItem } from '@app/hooks/useRemoveCartItem';
 import { Button } from '@app/components/common/buttons/Button';
 import { Image } from '@app/components/common/images/Image';
@@ -15,6 +16,7 @@ export interface CartDrawerItemProps {
 export const CartDrawerItem: FC<CartDrawerItemProps> = ({ item, currencyCode, isRemoving }) => {
   const removeCartItem = useRemoveCartItem();
   const handleRemoveFromCart = () => removeCartItem.submit(item);
+  const itemCustomTxt: any = item?.metadata?.customMsjField;
 
   return (
     <li
@@ -37,6 +39,11 @@ export const CartDrawerItem: FC<CartDrawerItemProps> = ({ item, currencyCode, is
             <div>
               <h3 className="text-base font-bold text-gray-900">{item.product_title}</h3>
               <p className="mt-0.5 text-sm text-gray-500">{item.variant_title}</p>
+              { itemCustomTxt
+                && <p className={`mt-0.5 text-sm text-gray-500 max-w-[12rem] [word-wrap:break-word] ${
+                  itemCustomTxt.length > 30 ? 'text-[9px]' : ''
+                }`}>Custom text: {itemCustomTxt}</p>
+              }
             </div>
             <Button variant="link" onClick={handleRemoveFromCart} disabled={isRemoving} className="text-sm">
               {isRemoving ? 'Removing' : 'Remove'}

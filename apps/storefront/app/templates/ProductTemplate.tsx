@@ -36,9 +36,11 @@ import { Validator } from 'remix-validated-form';
 import { StoreProductReview, StoreProductReviewStats } from '@lambdacurry/medusa-plugins-sdk';
 import { ProductReviewStars } from '@app/components/reviews/ProductReviewStars';
 import { formatPrice, getCheapestProductVariant, getVariantFinalPrice } from '@libs/util/prices';
+import { FieldText } from '@app/components/common/forms/fields/FieldText';
 
 export interface AddToCartFormValues {
   productId: string;
+  customMsjField?: string;
   quantity?: number;
   options: {
     [key: string]: string;
@@ -62,8 +64,10 @@ export const getAddToCartValidator = (product: StoreProduct): Validator<AddToCar
     {} as { [key: string]: Yup.Schema<string> },
   );
 
+  const isProductCustom = product?.type && product.type?.value === 'custom-obj';
   const schemaShape: Record<keyof AddToCartFormValues, Yup.AnySchema> = {
     productId: Yup.string().required('Product ID is required'),
+    customMsjField: isProductCustom ? Yup.string().required('Custom text is required'): Yup.string(),
     quantity: Yup.number().optional(),
     options: Yup.object().shape(optionsValidation),
   };
@@ -174,7 +178,7 @@ export const ProductTemplate = ({ product, reviewsCount, reviewStats }: ProductT
     () => product.options?.map(({ id }) => controlledOptions[id]),
     [product, controlledOptions],
   );
-
+  const [customText, setCustomText] = useState("");
   const variantMatrix = useMemo(() => selectVariantMatrix(product), [product]);
   const selectedVariant = useMemo(() => {
     return selectVariantFromMatrixBySelectedOptions(variantMatrix, selectedOptions);
@@ -317,6 +321,14 @@ export const ProductTemplate = ({ product, reviewsCount, reviewStats }: ProductT
     }
   }, [defaultValues.options, controlledOptions]);
 
+  const onChangeInputCustom = (element: any) => {
+    const useText = element.target.value;
+
+    if(useText.length <= 40) {
+      setCustomText(useText);
+    }
+  }
+
   useEffect(() => {
     // Initialize controlledOptions with defaultValues.options
     setControlledOptions(defaultValues.options);
@@ -353,9 +365,8 @@ export const ProductTemplate = ({ product, reviewsCount, reviewStats }: ProductT
                 <div className="md:py-6">
                   <Grid className="!gap-0">
                     <GridColumn className="mb-8 md:col-span-6 lg:col-span-7 xl:pr-16 xl:pl-9">
-                      <ProductImageGallery key={product.id} product={product} />
+                      <ProductImageGallery textOverImage={customText} key={product.id} product={product} />
                     </GridColumn>
-
                     <GridColumn className="flex flex-col md:col-span-6 lg:col-span-5">
                       <div className="px-0 sm:px-6 md:p-10 md:pt-0">
                         <div>
@@ -435,7 +446,20 @@ export const ProductTemplate = ({ product, reviewsCount, reviewStats }: ProductT
                         )}
 
                         <FormError />
-
+                        {
+                          product?.type && product.type?.value === 'custom-obj'
+                          && <>
+                              <FieldLabel className="mb-2">What should we write on your mug?</FieldLabel>
+                              <FieldText
+                                value={customText}
+                                name={"customMsjField"}
+                                placeholder="Required"
+                                autoComplete="given_name"
+                                className="sm:col-span-6"
+                                onChange={onChangeInputCustom}
+                              />
+                            </>
+                        }
                         <div className="my-2 flex flex-col gap-2">
                           <div className="flex items-center gap-4 py-2">
                             {!soldOut && <QuantitySelector variant={selectedVariant} />}

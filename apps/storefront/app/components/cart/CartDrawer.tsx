@@ -171,7 +171,6 @@ export const CartDrawer: FC = () => {
 
   const lineItems = cart?.items ?? [];
   const lineItemsTotal = lineItems.reduce((acc, item) => acc + item.quantity, 0);
-
   const handleCheckoutClick = useCallback(() => {
     setNavigatingToCheckout(true);
     navigate('/checkout');
@@ -205,7 +204,6 @@ export const CartDrawer: FC = () => {
                 {/* Content */}
                 <div className="flex-1 overflow-y-auto px-4 py-6 sm:px-6">
                   <CartDrawerHeader itemCount={lineItemsTotal} onClose={handleClose} />
-
                   <CartDrawerContent
                     items={lineItems}
                     isRemovingItemId={isRemovingItemId}

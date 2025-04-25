@@ -97,14 +97,12 @@ export const CompleteCheckoutForm: FC<CompleteCheckoutFormProps> = ({
     const formElement = event.target as HTMLFormElement;
 
     setSubmitting(true);
-
     if (data.billingAddress && !data.sameAsShipping && !isEqual(billingAddress, data.billingAddress)) {
       const formData = convertToFormData({
         cartId: data.cartId,
         subaction: CheckoutAction.UPDATE_BILLING_ADDRESS,
         billingAddress: data.billingAddress,
       } as UpdateBillingAddressInput);
-
       await fetch('/api/checkout', { method: 'post', body: formData });
     }
 

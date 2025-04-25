@@ -25,7 +25,6 @@ export const LineItemQuantitySelect: FC<LineItemQuantitySelectProps> = ({
 }) => {
   const fetcher = useFetcher<{}>() as FetcherWithComponents<{}>;
   const isLoading = ['submitting', 'loading'].includes(fetcher.state);
-
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     fetcher.submit(
       {

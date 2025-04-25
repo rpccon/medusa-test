@@ -23,6 +23,7 @@ export const CheckoutOrderSummaryItem: FC<CheckoutOrderSummaryItemProps> = ({ it
   const removeCartItem = useRemoveCartItem();
   const handleRemoveFromCart = () => removeCartItem.submit(item);
   const isRemovingFromCart = ['loading', 'submitting'].includes(removeCartItem.state);
+  const itemCustomTxt: any = item?.metadata?.customMsjField;
 
   if (!cart) return null;
 
@@ -45,6 +46,7 @@ export const CheckoutOrderSummaryItem: FC<CheckoutOrderSummaryItemProps> = ({ it
               </Link>
             </h4>
             <p className="mt-0.5 text-sm text-gray-500">{item.variant_title}</p>
+            {itemCustomTxt && <p className="mt-0.5 text-sm text-gray-500">Custom text: {itemCustomTxt}</p>}
           </div>
 
           <div className="ml-4 flow-root flex-shrink-0">

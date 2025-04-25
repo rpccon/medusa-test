@@ -56,6 +56,7 @@ export const updateCart = withAuthHeaders(async (request, authHeaders, data: Htt
   return sdk.store.cart.update(cartId, data, {}, authHeaders).catch(medusaError);
 });
 
+
 export const addToCart = withAuthHeaders(
   async (
     request,
@@ -63,22 +64,24 @@ export const addToCart = withAuthHeaders(
     data: {
       variantId: string;
       quantity: number;
+      customMsjField: string;
     },
   ) => {
-    const { variantId, quantity } = data;
+    const { variantId, quantity, customMsjField } = data;
+    const metadata = { customMsjField };
 
     if (!variantId) {
       throw new Error('Missing variant ID when adding to cart');
     }
 
     const cartId = await getCartId(request.headers);
-
     if (cartId) {
       return await sdk.store.cart.createLineItem(
         cartId,
         {
           variant_id: variantId,
           quantity,
+          metadata
         },
         {},
         authHeaders,
@@ -87,7 +90,7 @@ export const addToCart = withAuthHeaders(
 
     const region = await getSelectedRegion(request.headers);
 
-    const cart = await createCart(request, { region_id: region.id, items: [{ variant_id: variantId, quantity }] });
+    const cart = await createCart(request, { region_id: region.id, items: [{ variant_id: variantId, quantity, metadata }] });
 
     return cart;
   },
